@@ -77,6 +77,7 @@ import type {
 } from "./types";
 import { getHostWorkerPool } from "./workers/host-worker-pool";
 import { gitWorkspaceRefsTask } from "./workers/tasks/git";
+import { disposeUsageWorkerPool } from "./workers/usage-worker-pool";
 import { disposeWorkspaceTitleJobs } from "./workspaces/workspace-title-jobs";
 
 export interface CreateAppOptions {
@@ -579,6 +580,11 @@ export function createApp(options: CreateAppOptions): CreateAppResult {
 			await getHostWorkerPool().dispose();
 		} catch (err) {
 			console.warn("[host-service] hostWorkerPool.dispose failed:", err);
+		}
+		try {
+			await disposeUsageWorkerPool();
+		} catch (err) {
+			console.warn("[host-service] usageWorkerPool.dispose failed:", err);
 		}
 		try {
 			eventBus.close();
